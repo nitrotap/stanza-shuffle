@@ -1196,6 +1196,31 @@
             return poems2[randomIndex];
         }
 
+        function annotateRepeatedLines(lines) {
+            const lineCounts = {};
+            const annotatedLines = [];
+
+            // Count occurrences of each line
+            lines.forEach(line => {
+                lineCounts[line] = (lineCounts[line] || 0) + 1;
+            });
+
+            const lineOccurrences = {};
+
+            // Annotate lines with occurrence number
+            lines.forEach(line => {
+                if (lineCounts[line] > 1) {
+                    lineOccurrences[line] = (lineOccurrences[line] || 0) + 1;
+                    const annotation = ` (${lineOccurrences[line]} of ${lineCounts[line]})`;
+                    annotatedLines.push(line.includes("I rise") ? line + annotation : line);
+                } else {
+                    annotatedLines.push(line);
+                }
+            });
+
+            return annotatedLines;
+        }
+
         function randomizePoem() {
             let poemText = document.getElementById('poemInput').value.trim();
             let poemTitle = "Random Poem"; // Default title
@@ -1210,10 +1235,14 @@
                 poemAuthor = randomPoem.author;
             }
             originalLines = poemText.split('\n').filter(line => line.trim() !== '');
+            const annotatedLines = annotateRepeatedLines(originalLines);
             document.getElementById('poemTitle').innerText = poemTitle; // Update title
-            document.getElementById('poemAuthor').innerText = poemAuthor; // Update title
-            displayLinesForSorting(shuffleArray([...originalLines]), true);
+            document.getElementById('poemAuthor').innerText = poemAuthor; // Update author
+            displayLinesForSorting(shuffleArray([...annotatedLines]), true);
         }
+
+        // Ensure to call `annotateRepeatedLines` inside `randomizePoem` before displaying lines
+
 
 
 
@@ -1338,11 +1367,18 @@
             }
         }
 
+        function stripAnnotations(line) {
+            // This function removes the annotations from a line
+            // For example, it will turn "I rise (1 of 3)" into "I rise"
+            return line.replace(/\s\(\d+ of \d+\)$/, '');
+        }
+
         function checkOrder() {
             const lines = document.querySelectorAll('#sortablePoem .line');
             let correctCount = 0;
             lines.forEach((line, index) => {
-                if (line.textContent.trim() === originalLines[index].trim()) {
+                // Use stripAnnotations to compare the line's text content without annotations
+                if (stripAnnotations(line.textContent.trim()) === stripAnnotations(originalLines[index].trim())) {
                     line.classList.add('correct', 'bg-success', 'text-white');
                     line.classList.remove('incorrect');
                     correctCount++;
@@ -1353,6 +1389,7 @@
             });
             updateProgressBar(correctCount, lines.length);
         }
+
 
         function updateProgressBar(correctCount, totalCount) {
             const percentage = Math.round((correctCount / totalCount) * 100);
