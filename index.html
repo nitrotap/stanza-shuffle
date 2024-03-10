@@ -41,7 +41,6 @@
         <p>A poetry sorting game</p>
         <textarea id="poemInput" class="form-control mb-3" rows="10" placeholder="Enter a poem here..."></textarea>
         <button onclick="randomizePoem()" class="btn btn-primary mb-3">Randomize & Play</button>
-        <button onclick="randomizeUnlockedLines()" class="btn btn-info mb-3">Shuffle Unlocked Lines</button>
         <div class="progress mb-3">
             <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
                 aria-valuemin="0" aria-valuemax="100">0%</div>
@@ -64,11 +63,6 @@
             }
             originalLines = poemText.split('\n').filter(line => line.trim() !== '');
             displayLinesForSorting(shuffleArray([...originalLines]), true);
-        }
-
-        function randomizeUnlockedLines() {
-            const unlockedLines = document.querySelectorAll('#sortablePoem .line:not(.correct)');
-            displayLinesForSorting(shuffleArray(Array.from(unlockedLines).map(line => line.textContent)), false);
         }
 
         function shuffleArray(array) {
