@@ -1,68 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Poetry Sorting Game</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .line {
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #f8f9fa;
-            border-radius: 0.25rem;
-            cursor: pointer;
-        }
-
-        .correct {
-            background-color: #28a745 !important;
-            color: #fff !important;
-            border-color: #10461c !important;
-        }
-
-        .incorrect {
-            background-color: #f5c3c8 !important;
-            color: #000 !important;
-            border-color: #ef2b3e !important;
-        }
-
-        .selected {
-            border-color: #000 !important;
-            /* Highlight the selected line */
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container my-5">
-        <h2 class="mb-4">Stanza Shuffle</h2>
-        <p>A poetry sorting game</p>
-        <textarea id="poemInput" class="form-control mb-3" rows="10" placeholder="Enter a poem here..."></textarea>
-        <button onclick="randomizePoem()" class="btn btn-primary mb-3">Randomize & Play</button>
-        <div class="progress mb-3">
-            <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
-                aria-valuemin="0" aria-valuemax="100">0%</div>
-        </div>
-        <div id="poemTitle" class="mb-3"></div>
-        <div id="poemAuthor" class="mb-3"></div>
-
-
-        <div id="sortablePoem" tabindex="0"></div>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        let originalLines = [];
-        let selectedLine = null;
-        const poems = [
-            {
-                title: "The Road Not Taken",
-                author: "Robert Frost",
-                content: `
+const poems2 = [
+  {
+    title: "The Road Not Taken",
+    author: "Robert Frost",
+    content: `
       Two roads diverged in a yellow wood,
       And sorry I could not travel both
       And be one traveler, long I stood
@@ -87,11 +27,11 @@
       I took the one less traveled by,
       And that has made all the difference.
     `
-            },
-            {
-                title: "If",
-                author: "Rudyard Kipling",
-                content: `
+  },
+  {
+    title: "If",
+    author: "Rudyard Kipling",
+    content: `
       If you can keep your head when all about you
       Are losing theirs and blaming it on you,
       If you can trust yourself when all men doubt you,
@@ -128,11 +68,11 @@
       Yours is the Earth and everything that’s in it,
       And—which is more—you’ll be a Man, my son!
     `
-            },
-            {
-                title: "I Wandered Lonely as a Cloud",
-                author: "William Wordsworth",
-                content: `
+  },
+  {
+    title: "I Wandered Lonely as a Cloud",
+    author: "William Wordsworth",
+    content: `
       I wandered lonely as a cloud
       That floats on high o'er vales and hills,
       When all at once I saw a crowd,
@@ -161,11 +101,11 @@
       And then my heart with pleasure fills,
       And dances with the daffodils.
     `
-            },
-            {
-                title: "A Dream Within A Dream",
-                author: "Edgar Allan Poe",
-                content: `
+  },
+  {
+    title: "A Dream Within A Dream",
+    author: "Edgar Allan Poe",
+    content: `
       Take this kiss upon the brow!
       And, in parting from you now,
       Thus much let me avow —
@@ -192,11 +132,11 @@
       Is all that we see or seem
       But a dream within a dream?
     `
-            },
-            {
-                title: "O Captain! My Captain!",
-                author: "Walt Whitman",
-                content: `
+  },
+  {
+    title: "O Captain! My Captain!",
+    author: "Walt Whitman",
+    content: `
       O Captain! my Captain! our fearful trip is done,
       The ship has weather’d every rack, the prize we sought is won,
       The port is near, the bells I hear, the people all exulting,
@@ -224,182 +164,12 @@
       Walk the deck my Captain lies,
       Fallen cold and dead.
     `
-            }
-        ];
-
-
-        const poems2 = [
-            {
-                title: "The Road Not Taken",
-                author: "Robert Frost",
-                content: `
-      Two roads diverged in a yellow wood,
-      And sorry I could not travel both
-      And be one traveler, long I stood
-      And looked down one as far as I could
-      To where it bent in the undergrowth;
-
-      Then took the other, as just as fair,
-      And having perhaps the better claim,
-      Because it was grassy and wanted wear;
-      Though as for that the passing there
-      Had worn them really about the same,
-
-      And both that morning equally lay
-      In leaves no step had trodden black.
-      Oh, I kept the first for another day!
-      Yet knowing how way leads on to way,
-      I doubted if I should ever come back.
-
-      I shall be telling this with a sigh
-      Somewhere ages and ages hence:
-      Two roads diverged in a wood, and I—
-      I took the one less traveled by,
-      And that has made all the difference.
-    `
-            },
-            {
-                title: "If",
-                author: "Rudyard Kipling",
-                content: `
-      If you can keep your head when all about you
-      Are losing theirs and blaming it on you,
-      If you can trust yourself when all men doubt you,
-      But make allowance for their doubting too;
-      If you can wait and not be tired by waiting,
-      Or being lied about, don’t deal in lies,
-      Or being hated, don’t give way to hating,
-      And yet don’t look too good, nor talk too wise:
-
-      If you can dream—and not make dreams your master;
-      If you can think—and not make thoughts your aim;
-      If you can meet with Triumph and Disaster
-      And treat those two impostors just the same;
-      If you can bear to hear the truth you’ve spoken
-      Twisted by knaves to make a trap for fools,
-      Or watch the things you gave your life to, broken,
-      And stoop and build ’em up with worn-out tools:
-
-      If you can make one heap of all your winnings
-      And risk it on one turn of pitch-and-toss,
-      And lose, and start again at your beginnings
-      And never breathe a word about your loss;
-      If you can force your heart and nerve and sinew
-      To serve your turn long after they are gone,
-      And so hold on when there is nothing in you
-      Except the Will which says to them: ‘Hold on!’
-
-      If you can talk with crowds and keep your virtue,
-      Or walk with Kings—nor lose the common touch,
-      If neither foes nor loving friends can hurt you,
-      If all men count with you, but none too much;
-      If you can fill the unforgiving minute
-      With sixty seconds’ worth of distance run,
-      Yours is the Earth and everything that’s in it,
-      And—which is more—you’ll be a Man, my son!
-    `
-            },
-            {
-                title: "I Wandered Lonely as a Cloud",
-                author: "William Wordsworth",
-                content: `
-      I wandered lonely as a cloud
-      That floats on high o'er vales and hills,
-      When all at once I saw a crowd,
-      A host, of golden daffodils;
-      Beside the lake, beneath the trees,
-      Fluttering and dancing in the breeze.
-
-      Continuous as the stars that shine
-      And twinkle on the milky way,
-      They stretched in never-ending line
-      Along the margin of a bay:
-      Ten thousand saw I at a glance,
-      Tossing their heads in sprightly dance.
-
-      The waves beside them danced; but they
-      Out-did the sparkling waves in glee:
-      A poet could not but be gay,
-      In such a jocund company:
-      I gazed—and gazed—but little thought
-      What wealth the show to me had brought:
-
-      For oft, when on my couch I lie
-      In vacant or in pensive mood,
-      They flash upon that inward eye
-      Which is the bliss of solitude;
-      And then my heart with pleasure fills,
-      And dances with the daffodils.
-    `
-            },
-            {
-                title: "A Dream Within A Dream",
-                author: "Edgar Allan Poe",
-                content: `
-      Take this kiss upon the brow!
-      And, in parting from you now,
-      Thus much let me avow —
-      You are not wrong, who deem
-      That my days have been a dream;
-      Yet if hope has flown away
-      In a night, or in a day,
-      In a vision, or in none,
-      Is it therefore the less gone?
-      All that we see or seem
-      Is but a dream within a dream.
-
-      I stand amid the roar
-      Of a surf-tormented shore,
-      And I hold within my hand
-      Grains of the golden sand —
-      How few! yet how they creep
-      Through my fingers to the deep,
-      While I weep — while I weep!
-      O God! Can I not grasp
-      Them with a tighter clasp?
-      O God! can I not save
-      One from the pitiless wave?
-      Is all that we see or seem
-      But a dream within a dream?
-    `
-            },
-            {
-                title: "O Captain! My Captain!",
-                author: "Walt Whitman",
-                content: `
-      O Captain! my Captain! our fearful trip is done,
-      The ship has weather’d every rack, the prize we sought is won,
-      The port is near, the bells I hear, the people all exulting,
-      While follow eyes the steady keel, the vessel grim and daring;
-      But O heart! heart! heart!
-      O the bleeding drops of red,
-      Where on the deck my Captain lies,
-      Fallen cold and dead.
-
-      O Captain! my Captain! rise up and hear the bells;
-      Rise up—for you the flag is flung—for you the bugle trills,
-      For you bouquets and ribbon’d wreaths—for you the shores a-crowding,
-      For you they call, the swaying mass, their eager faces turning;
-      Here Captain! dear father!
-      This arm beneath your head!
-      It is some dream that on the deck,
-      You’ve fallen cold and dead.
-
-      My Captain does not answer, his lips are pale and still,
-      My father does not feel my arm, he has no pulse nor will,
-      The ship is anchor’d safe and sound, its voyage closed and done,
-      From fearful trip the victor ship comes in with object won;
-      Exult O shores, and ring O bells!
-      But I with mournful tread,
-      Walk the deck my Captain lies,
-      Fallen cold and dead.
-    `
-            },
-            // Add more poems below
-            {
-                title: "Sonnet 18: Shall I compare thee to a summer’s day?",
-                author: "William Shakespeare",
-                content: `
+  },
+  // Add more poems below
+  {
+    title: "Sonnet 18: Shall I compare thee to a summer’s day?",
+    author: "William Shakespeare",
+    content: `
       Shall I compare thee to a summer’s day?
       Thou art more lovely and more temperate:
       Rough winds do shake the darling buds of May,
@@ -418,11 +188,11 @@
       So long as men can breathe or eyes can see,
       So long lives this, and this gives life to thee.
     `
-            },
-            {
-                title: "The Raven",
-                author: "Edgar Allan Poe",
-                content: `
+  },
+  {
+    title: "The Raven",
+    author: "Edgar Allan Poe",
+    content: `
       Once upon a midnight dreary, while I pondered, weak and weary,
       Over many a quaint and curious volume of forgotten lore—
       While I nodded, nearly napping, suddenly there came a tapping,
@@ -542,11 +312,11 @@
       And my soul from out that shadow that lies floating on the floor
       Shall be lifted—nevermore!
     `
-            },
-            {
-                title: "Annabel Lee",
-                author: "Edgar Allan Poe",
-                content: `
+  },
+  {
+    title: "Annabel Lee",
+    author: "Edgar Allan Poe",
+    content: `
       It was many and many a year ago,
       In a kingdom by the sea,
       That a maiden there lived whom you may know
@@ -594,11 +364,11 @@
       In her sepulchre there by the sea—
       In her tomb by the sounding sea.
     `
-            },
-            {
-                title: "The Love Song of J. Alfred Prufrock",
-                author: "T.S. Eliot",
-                content: `
+  },
+  {
+    title: "The Love Song of J. Alfred Prufrock",
+    author: "T.S. Eliot",
+    content: `
       Let us go then, you and I,
       When the evening is spread out against the sky
       Like a patient etherized upon a table;
@@ -750,11 +520,11 @@
       By sea-girls wreathed with seaweed red and brown
       Till human voices wake us, and we drown.
     `
-            },
-            {
-                title: "To Autumn",
-                author: "John Keats",
-                content: `
+  },
+  {
+    title: "To Autumn",
+    author: "John Keats",
+    content: `
       Season of mists and mellow fruitfulness,
       Close bosom-friend of the maturing sun;
       Conspiring with him how to load and bless
@@ -791,11 +561,11 @@
       The red-breast whistles from a garden-croft;
       And gathering swallows twitter in the skies.
     `
-            },
-            {
-                title: "The Waste Land",
-                author: "T.S. Eliot",
-                content: `
+  },
+  {
+    title: "The Waste Land",
+    author: "T.S. Eliot",
+    content: `
       April is the cruellest month, breeding
       Lilacs out of the dead land, mixing
       Memory and desire, stirring
@@ -880,11 +650,11 @@
       “Or with his nails he’ll dig it up again!
       “You! hypocrite lecteur!—mon semblable,—mon frère!”
     `
-            },
-            {
-                title: "Ozymandias",
-                author: "Percy Bysshe Shelley",
-                content: `
+  },
+  {
+    title: "Ozymandias",
+    author: "Percy Bysshe Shelley",
+    content: `
       I met a traveller from an antique land
       Who said: Two vast and trunkless legs of stone
       Stand in the desart. Near them, on the sand,
@@ -900,11 +670,11 @@
       Of that colossal wreck, boundless and bare
       The lone and level sands stretch far away.
     `
-            },
-            {
-                title: "Daffodils",
-                author: "William Wordsworth",
-                content: `
+  },
+  {
+    title: "Daffodils",
+    author: "William Wordsworth",
+    content: `
       I wandered lonely as a cloud
       That floats on high o'er vales and hills,
       When all at once I saw a crowd,
@@ -933,11 +703,11 @@
       And then my heart with pleasure fills,
       And dances with the daffodils.
     `
-            },
-            {
-                title: "She Walks in Beauty",
-                author: "Lord Byron",
-                content: `
+  },
+  {
+    title: "She Walks in Beauty",
+    author: "Lord Byron",
+    content: `
       She walks in beauty, like the night
       Of cloudless climes and starry skies;
       And all that’s best of dark and bright
@@ -959,11 +729,11 @@
       A mind at peace with all below,
       A heart whose love is innocent!
     `
-            },
-            {
-                title: "The Tyger",
-                author: "William Blake",
-                content: `
+  },
+  {
+    title: "The Tyger",
+    author: "William Blake",
+    content: `
       Tyger Tyger, burning bright,
       In the forests of the night;
       What immortal hand or eye,
@@ -994,11 +764,11 @@
       What immortal hand or eye,
       Dare frame thy fearful symmetry?
     `
-            },
-            {
-                title: "Stopping by Woods on a Snowy Evening",
-                author: "Robert Frost",
-                content: `
+  },
+  {
+    title: "Stopping by Woods on a Snowy Evening",
+    author: "Robert Frost",
+    content: `
       Whose woods these are I think I know.
       His house is in the village though;
       He will not see me stopping here
@@ -1019,11 +789,11 @@
       And miles to go before I sleep,
       And miles to go before I sleep.
     `
-            },
-            {
-                title: "I Wandered Lonely as a Cloud",
-                author: "William Wordsworth",
-                content: `
+  },
+  {
+    title: "I Wandered Lonely as a Cloud",
+    author: "William Wordsworth",
+    content: `
       I wandered lonely as a cloud
       That floats on high o'er vales and hills,
       When all at once I saw a crowd,
@@ -1052,11 +822,11 @@
       And then my heart with pleasure fills,
       And dances with the daffodils.
     `
-            },
-            {
-                title: "Kubla Khan",
-                author: "Samuel Taylor Coleridge",
-                content: `
+  },
+  {
+    title: "Kubla Khan",
+    author: "Samuel Taylor Coleridge",
+    content: `
       In Xanadu did Kubla Khan
       A stately pleasure-dome decree:
       Where Alph, the sacred river, ran
@@ -1069,11 +839,11 @@
       And here were forests ancient as the hills,
       Enfolding sunny spots of greenery.
     `
-            },
-            {
-                title: "Ode to a Nightingale",
-                author: "John Keats",
-                content: `
+  },
+  {
+    title: "Ode to a Nightingale",
+    author: "John Keats",
+    content: `
       My heart aches, and a drowsy numbness pains
       My sense, as though of hemlock I had drunk,
       Or emptied some dull opiate to the drains
@@ -1162,11 +932,11 @@
       Was it a vision, or a waking dream?
       Fled is that music:—Do I wake or sleep?
     `
-            },
-            {
-                title: "Sonnet 18",
-                author: "William Shakespeare",
-                content: `
+  },
+  {
+    title: "Sonnet 18",
+    author: "William Shakespeare",
+    content: `
       Shall I compare thee to a summer's day?
       Thou art more lovely and more temperate:
       Rough winds do shake the darling buds of May,
@@ -1185,183 +955,5 @@
       So long as men can breathe or eyes can see,
       So long lives this, and this gives life to thee.
     `
-            }
-        ]
-
-
-        // Function to choose a random poem if one isn't provided
-        function chooseRandomPoem() {
-            if (poems2.length === 0) return null;
-            const randomIndex = Math.floor(Math.random() * poems2.length);
-            return poems2[randomIndex];
-        }
-
-        function randomizePoem() {
-            let poemText = document.getElementById('poemInput').value.trim();
-            let poemTitle = "Random Poem"; // Default title
-            if (poemText === '') {
-                const randomPoem = chooseRandomPoem();
-                if (!randomPoem) {
-                    alert('No poems available.');
-                    return;
-                }
-                poemText = randomPoem.content;
-                poemTitle = randomPoem.title;
-                poemAuthor = randomPoem.author;
-            }
-            originalLines = poemText.split('\n').filter(line => line.trim() !== '');
-            document.getElementById('poemTitle').innerText = poemTitle; // Update title
-            document.getElementById('poemAuthor').innerText = poemAuthor; // Update title
-            displayLinesForSorting(shuffleArray([...originalLines]), true);
-        }
-
-
-
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function displayLinesForSorting(lines, initialDisplay) {
-            const container = document.getElementById('sortablePoem');
-            container.innerHTML = '';
-            lines.forEach((content, index) => {
-                const div = document.createElement('div');
-                div.textContent = content; // Assuming content is always a string
-                div.classList.add('line', 'text-dark', 'mb-2', 'p-2', 'border', 'rounded');
-                div.setAttribute('draggable', 'true');
-
-                div.addEventListener('dragstart', handleDragStart, false);
-                div.addEventListener('dragenter', handleDragEnter, false);
-                div.addEventListener('dragover', handleDragOver, false);
-                div.addEventListener('dragleave', handleDragLeave, false);
-                div.addEventListener('drop', handleDrop, false);
-                div.addEventListener('dragend', handleDragEnd, false);
-
-                container.appendChild(div);
-            });
-
-            if (initialDisplay) checkOrder();
-        }
-
-        let dragSrcEl = null;
-
-        function handleDragStart(e) {
-            // Target (this) element is the source node.
-            dragSrcEl = this;
-
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/html', this.innerHTML);
-        }
-
-        function handleDragOver(e) {
-            if (e.preventDefault) {
-                e.preventDefault(); // Necessary. Allows us to drop.
-            }
-
-            e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
-
-            return false;
-        }
-
-        function handleDragEnter(e) {
-            // this / e.target is the current hover target.
-            this.classList.add('over');
-        }
-
-        function handleDragLeave(e) {
-            this.classList.remove('over');  // this / e.target is previous target element.
-        }
-
-        function handleDrop(e) {
-            // this/e.target is current target element.
-            if (e.stopPropagation) {
-                e.stopPropagation(); // Stops some browsers from redirecting.
-            }
-
-            // Don't do anything if dropping the same line we're dragging.
-            if (dragSrcEl != this) {
-                // Set the source line's HTML to the HTML of the line we dropped on.
-                dragSrcEl.innerHTML = this.innerHTML;
-                this.innerHTML = e.dataTransfer.getData('text/html');
-
-                // Update order and progress after dropping
-                checkOrder();
-            }
-
-            return false;
-        }
-
-        function handleDragEnd(e) {
-            // this/e.target is the source node.
-            var lines = document.querySelectorAll('.line');
-            [].forEach.call(lines, function (line) {
-                line.classList.remove('over');
-            });
-        }
-
-        function getDragAfterElement(container, y) {
-            const draggableElements = [...container.querySelectorAll('.line:not(.dragging)')];
-
-            return draggableElements.reduce((closest, child) => {
-                const box = child.getBoundingClientRect();
-                const offset = y - box.top - box.height / 2;
-                if (offset < 0 && offset > closest.offset) {
-                    return { offset: offset, element: child };
-                } else {
-                    return closest;
-                }
-            }, { offset: Number.NEGATIVE_INFINITY }).element;
-        }
-
-
-        function selectLine(line) {
-            if (selectedLine) {
-                selectedLine.classList.remove('selected');
-            }
-            line.classList.add('selected');
-            selectedLine = line;
-        }
-
-        function handleKeyDown(e) {
-            const index = Array.from(e.target.parentNode.children).indexOf(e.target);
-            if (e.key === 'ArrowUp' && index > 0) {
-                e.target.parentNode.insertBefore(e.target, e.target.previousElementSibling);
-                checkOrder();
-            } else if (e.key === 'ArrowDown' && index < e.target.parentNode.children.length - 1) {
-                e.target.parentNode.insertBefore(e.target.nextElementSibling, e.target);
-                checkOrder();
-            }
-        }
-
-        function checkOrder() {
-            const lines = document.querySelectorAll('#sortablePoem .line');
-            let correctCount = 0;
-            lines.forEach((line, index) => {
-                if (line.textContent.trim() === originalLines[index].trim()) {
-                    line.classList.add('correct', 'bg-success', 'text-white');
-                    line.classList.remove('incorrect');
-                    correctCount++;
-                } else {
-                    line.classList.add('incorrect', 'bg-danger', 'text-white');
-                    line.classList.remove('correct');
-                }
-            });
-            updateProgressBar(correctCount, lines.length);
-        }
-
-        function updateProgressBar(correctCount, totalCount) {
-            const percentage = Math.round((correctCount / totalCount) * 100);
-            const progressBar = document.getElementById('progressBar');
-            progressBar.style.width = `${percentage}%`;
-            progressBar.setAttribute('aria-valuenow', percentage);
-            progressBar.textContent = `${percentage}%`;
-        }
-    </script>
-</body>
-
-</html>
+  }
+]
