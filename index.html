@@ -1223,7 +1223,8 @@
 
         function randomizePoem() {
             let poemText = document.getElementById('poemInput').value.trim();
-            let poemTitle = "Random Poem"; // Default title
+            let poemTitle = ""; // Default title
+            let poemAuthor = "";
             if (poemText === '') {
                 const randomPoem = chooseRandomPoem();
                 if (!randomPoem) {
