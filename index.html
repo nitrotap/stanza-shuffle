@@ -17,13 +17,13 @@
         }
 
         .correct {
-            background-color: #28a745 !important;
+            background-color: #18702d !important;
             color: #fff !important;
-            border-color: #10461c !important;
+            border-color: #044a13 !important;
         }
 
         .incorrect {
-            background-color: #f5c3c8 !important;
+            background-color: #ffedef !important;
             color: #000 !important;
             border-color: #ef2b3e !important;
         }
@@ -41,6 +41,11 @@
         <p>A poetry sorting game</p>
         <textarea id="poemInput" class="form-control mb-3" rows="10" placeholder="Enter a poem here..."></textarea>
         <button onclick="randomizePoem()" class="btn btn-primary mb-3">Randomize & Play</button>
+        <button onclick="randomizePoem()" class="btn btn-info mb-3">Play</button>
+        <button onclick="displayCurrentOrder()" class="btn btn-info mb-3">Display Current Order</button>
+        <button onclick="saveCurrentOrder()" class="btn btn-success mb-3">Save Current Order</button>
+
+
         <div class="progress mb-3">
             <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
                 aria-valuemin="0" aria-valuemax="100">0%</div>
@@ -50,6 +55,16 @@
 
 
         <div id="sortablePoem" tabindex="0"></div>
+
+        <div id="displayOrderContainer" class="mt-3"></div>
+
+        <footer id="footer">
+            <p>
+                &#127956;<a href="https://nitrotap.dev" target="_blank" rel="noopener noreferrer">nitrotap</a></p>
+        </footer>
+
+
+
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -1245,6 +1260,21 @@
         // Ensure to call `annotateRepeatedLines` inside `randomizePoem` before displaying lines
 
 
+        function displayCurrentOrder() {
+            const lines = document.querySelectorAll('#sortablePoem .line');
+            const displayContainer = document.getElementById('displayOrderContainer');
+            displayContainer.innerHTML = ''; // Clear previous content
+            const orderedList = document.createElement('ol'); // Create an ordered list to display lines
+
+            lines.forEach(line => {
+                const listItem = document.createElement('li');
+                listItem.textContent = stripAnnotations(line.textContent.trim());
+                orderedList.appendChild(listItem);
+            });
+
+            displayContainer.appendChild(orderedList);
+        }
+
 
 
 
@@ -1255,6 +1285,23 @@
             }
             return array;
         }
+
+        function saveCurrentOrder() {
+            const lines = document.querySelectorAll('#sortablePoem .line');
+            let poemContent = '';
+            lines.forEach(line => {
+                poemContent += stripAnnotations(line.textContent.trim()) + '\n';
+            });
+
+            const blob = new Blob([poemContent], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'poem_order.txt';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
 
         function displayLinesForSorting(lines, initialDisplay) {
             const container = document.getElementById('sortablePoem');
